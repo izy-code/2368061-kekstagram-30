@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Иван Жиребный](https://up.htmlacademy.ru/javascript/30/user/2368061).
-* Наставник: `Неизвестно`.
+* Наставник: [Кенан Агаев](https://htmlacademy.ru/profile/kenakula).
 
 ---
 
