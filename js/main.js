@@ -131,5 +131,3 @@ const createPhotoDescription = () => ({
 const photoDescriptions = Array.from({ length: PHOTO_COUNT }, createPhotoDescription);
 
 console.log(photoDescriptions);
-
-const getRepeats = (array) => array.reduce((result, item) => ((item in result) ? { ...result, [item]: result[item] + 1 } : { ...result, [item]: 1 }), {});
