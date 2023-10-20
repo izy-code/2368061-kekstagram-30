@@ -51,9 +51,7 @@ extractNumber(-1); // 1
 extractNumber(1.5); // 15
 
 const parseTimeString = (timeString) => {
-  const colonIndex = timeString.indexOf(':');
-  const hourString = timeString.slice(0, colonIndex);
-  const minuteString = timeString.slice(colonIndex + 1);
+  const [hourString, minuteString] = timeString.split(':');
 
   return { hour: parseInt(hourString, 10), minute: parseInt(minuteString, 10) };
 };
