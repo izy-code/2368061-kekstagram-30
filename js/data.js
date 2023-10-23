@@ -40,8 +40,8 @@ const NAMES = [
   'Стивен Майзел',
   'Энни Лейбовиц'
 ];
-const IMAGE_COUNT = 25;
-const IMAGE_ID_MIN = 1;
+const PICTURE_COUNT = 25;
+const PICTURE_ID_MIN = 1;
 const FILE_NUMBER_MIN = 1;
 const FILE_NUMBER_MAX = 25;
 const COMMENT_COUNT_MIN = 0;
@@ -53,10 +53,10 @@ const LIKE_COUNT_MAX = 200;
 const COMMENT_LINE_COUNT_MIN = 1;
 const COMMENT_LINE_COUNT_MAX = 2;
 
-const fileNumberMax = (FILE_NUMBER_MAX - FILE_NUMBER_MIN + 1 >= IMAGE_COUNT) ? FILE_NUMBER_MAX : (IMAGE_COUNT + FILE_NUMBER_MIN - 1);
+const fileNumberMax = (FILE_NUMBER_MAX - FILE_NUMBER_MIN + 1 >= PICTURE_COUNT) ? FILE_NUMBER_MAX : (PICTURE_COUNT + FILE_NUMBER_MIN - 1);
 
 const commentIdGenerator = createRandomIdFromRangeGenerator(0, Number.MAX_SAFE_INTEGER);
-const imageIdGenerator = createSequentialIdGenerator(IMAGE_ID_MIN);
+const pictureIdGenerator = createSequentialIdGenerator(PICTURE_ID_MIN);
 const fileNumberGenerator = createRandomIdFromRangeGenerator(FILE_NUMBER_MIN, fileNumberMax);
 
 const createComment = () => ({
@@ -66,14 +66,14 @@ const createComment = () => ({
   name: getRandomArrayElement(NAMES)
 });
 
-const createImage = () => ({
-  id: imageIdGenerator(),
+const createPicture = () => ({
+  id: pictureIdGenerator(),
   url: `photos/${fileNumberGenerator()}.jpg`,
   description: getRandomArrayElement(DESCRIPTIONS),
   likes: getRandomInteger(LIKE_COUNT_MIN, LIKE_COUNT_MAX),
   comments: Array.from({ length: getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX) }, createComment)
 });
 
-const createImages = () => Array.from({ length: IMAGE_COUNT }, createImage);
+const createPictures = () => Array.from({ length: PICTURE_COUNT }, createPicture);
 
-export {createImages};
+export {createPictures};

@@ -1,4 +1,4 @@
-import {createImages} from './data.js';
+import {createPictures} from './data.js';
 
 // eslint-disable-next-line no-console
-console.table(createImages());
+console.table(createPictures());
