@@ -1,4 +1,3 @@
-import {createPictures} from './data.js';
+import { appendPictures } from './picture-gallery.js';
 
-// eslint-disable-next-line no-console
-console.table(createPictures());
+appendPictures();

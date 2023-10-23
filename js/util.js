@@ -45,4 +45,4 @@ const getJoinedLine = (lines, lineCountMin, lineCountMax) => {
   return Array.from({ length: lineCount }, () => lines[lineIndexGenerator()]).join(' ');
 };
 
-export {getRandomInteger, getRandomArrayElement, createSequentialIdGenerator, createRandomIdFromRangeGenerator, getJoinedLine};
+export { getRandomInteger, getRandomArrayElement, createSequentialIdGenerator, createRandomIdFromRangeGenerator, getJoinedLine };
