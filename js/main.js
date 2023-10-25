@@ -1,4 +1,5 @@
-import {createImages} from './data.js';
+import { createPictures } from './data.js';
+import { addThumbnails } from './thumbnail-gallery.js';
 
-// eslint-disable-next-line no-console
-console.table(createImages());
+const pictures = createPictures();
+addThumbnails(pictures);

@@ -1,4 +1,10 @@
-import {getRandomInteger, getRandomArrayElement, createSequentialIdGenerator, createRandomIdFromRangeGenerator, getJoinedLine} from './util.js';
+import {
+  getRandomInteger,
+  getRandomArrayElement,
+  createSequentialIdGenerator,
+  createRandomIdFromRangeGenerator,
+  createJoinedLine
+} from './util.js';
 
 const DESCRIPTIONS = [
   'Игра эмоций в красках',
@@ -40,40 +46,42 @@ const NAMES = [
   'Стивен Майзел',
   'Энни Лейбовиц'
 ];
-const IMAGE_COUNT = 25;
-const IMAGE_ID_MIN = 1;
+const PICTURE_COUNT = 25;
+const PICTURE_ID_MIN = 1;
 const FILE_NUMBER_MIN = 1;
 const FILE_NUMBER_MAX = 25;
-const COMMENT_COUNT_MIN = 0;
-const COMMENT_COUNT_MAX = 30;
-const AVATAR_NUMBER_MIN = 1;
-const AVATAR_NUMBER_MAX = 6;
 const LIKE_COUNT_MIN = 15;
 const LIKE_COUNT_MAX = 200;
+const COMMENT_COUNT_MIN = 0;
+const COMMENT_COUNT_MAX = 30;
+const COMMENT_ID_MIN = 0;
+const COMMENT_ID_MAX = Number.MAX_SAFE_INTEGER;
+const AVATAR_NUMBER_MIN = 1;
+const AVATAR_NUMBER_MAX = 6;
 const COMMENT_LINE_COUNT_MIN = 1;
 const COMMENT_LINE_COUNT_MAX = 2;
 
-const fileNumberMax = (FILE_NUMBER_MAX - FILE_NUMBER_MIN + 1 >= IMAGE_COUNT) ? FILE_NUMBER_MAX : (IMAGE_COUNT + FILE_NUMBER_MIN - 1);
+const fileNumberMax = (FILE_NUMBER_MAX - FILE_NUMBER_MIN + 1 >= PICTURE_COUNT) ? FILE_NUMBER_MAX : (PICTURE_COUNT + FILE_NUMBER_MIN - 1);
 
-const commentIdGenerator = createRandomIdFromRangeGenerator(0, Number.MAX_SAFE_INTEGER);
-const imageIdGenerator = createSequentialIdGenerator(IMAGE_ID_MIN);
+const commentIdGenerator = createRandomIdFromRangeGenerator(COMMENT_ID_MIN, COMMENT_ID_MAX);
+const pictureIdGenerator = createSequentialIdGenerator(PICTURE_ID_MIN);
 const fileNumberGenerator = createRandomIdFromRangeGenerator(FILE_NUMBER_MIN, fileNumberMax);
 
 const createComment = () => ({
   id: commentIdGenerator(),
   avatar: `img/avatar-${getRandomInteger(AVATAR_NUMBER_MIN, AVATAR_NUMBER_MAX)}.svg`,
-  message: getJoinedLine(COMMENT_LINES, COMMENT_LINE_COUNT_MIN, COMMENT_LINE_COUNT_MAX),
+  message: createJoinedLine(COMMENT_LINES, COMMENT_LINE_COUNT_MIN, COMMENT_LINE_COUNT_MAX),
   name: getRandomArrayElement(NAMES)
 });
 
-const createImage = () => ({
-  id: imageIdGenerator(),
+const createPicture = () => ({
+  id: pictureIdGenerator(),
   url: `photos/${fileNumberGenerator()}.jpg`,
   description: getRandomArrayElement(DESCRIPTIONS),
   likes: getRandomInteger(LIKE_COUNT_MIN, LIKE_COUNT_MAX),
   comments: Array.from({ length: getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX) }, createComment)
 });
 
-const createImages = () => Array.from({ length: IMAGE_COUNT }, createImage);
+const createPictures = () => Array.from({ length: PICTURE_COUNT }, createPicture);
 
-export {createImages};
+export { createPictures };
