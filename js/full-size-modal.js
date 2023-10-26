@@ -15,6 +15,8 @@ const description = modal.querySelector('.social__caption');
 const commentLoader = modal.querySelector('.comments-loader');
 const modalCloseButton = modal.querySelector('.big-picture__cancel');
 
+let currentPictureData;
+
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -23,9 +25,11 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
-const createCommentNodes = (comments) => {
+const createCommentNodes = (comments, startingCommentIndex) => {
   const commentFragment = document.createDocumentFragment();
-  for (let i = 0; i < comments.length; i++) {
+  const createdCommentsCount = Math.min(comments.length, COMMENTS_LOAD_STEP + startingCommentIndex);
+
+  for (let i = startingCommentIndex; i < createdCommentsCount; i++) {
     const { avatar, message, name } = comments[i];
     const commentNode = commentTemplate.cloneNode(true);
 
@@ -33,11 +37,11 @@ const createCommentNodes = (comments) => {
     commentNode.querySelector('.social__picture').alt = name;
     commentNode.querySelector('.social__text').textContent = message;
 
-    if (i >= COMMENTS_LOAD_STEP) {
-      commentNode.classList.add('hidden');
-    }
-
     commentFragment.append(commentNode);
+  }
+
+  if (createdCommentsCount === comments.length) {
+    commentLoader.classList.add('hidden');
   }
 
   return commentFragment;
@@ -46,18 +50,10 @@ const createCommentNodes = (comments) => {
 function openFullSizeModal(dataObject) {
   picture.src = dataObject.url;
   likeCount.textContent = dataObject.likes;
+  totalCommentCount.textContent = dataObject.comments.length;
   description.textContent = dataObject.description;
-
-  const commentsCount = dataObject.comments.length;
-  shownCommentCount.textContent = Math.min(commentsCount, COMMENTS_LOAD_STEP);
-  totalCommentCount.textContent = commentsCount;
-  commentLoader.classList.remove('hidden');
-
-  if (commentsCount <= COMMENTS_LOAD_STEP) {
-    commentLoader.classList.add('hidden');
-  }
-
-  commentList.replaceChildren(createCommentNodes(dataObject.comments));
+  commentList.replaceChildren(createCommentNodes(dataObject.comments, 0));
+  shownCommentCount.textContent = commentList.childElementCount;
 
   modal.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -68,6 +64,7 @@ function openFullSizeModal(dataObject) {
 function closeFullSizeModal() {
   commentList.replaceChildren();
 
+  commentLoader.classList.remove('hidden');
   modal.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
@@ -82,30 +79,19 @@ const addThumbnailClickHandler = (pictures) => {
       evt.preventDefault();
 
       const thumbnailSrc = thumbnailNode.querySelector('.picture__img').src;
-      const pictureData = getDataFromUrl(thumbnailSrc, pictures, 'photos');
-
-      openFullSizeModal(pictureData);
+      currentPictureData = getDataFromUrl(thumbnailSrc, pictures, 'photos');
+      openFullSizeModal(currentPictureData);
     }
   });
 };
 
-modalCloseButton.addEventListener('click', () => {
-  closeFullSizeModal();
+commentLoader.addEventListener('click', () => {
+  commentList.append(createCommentNodes(currentPictureData.comments, commentList.childElementCount));
+  shownCommentCount.textContent = commentList.childElementCount;
 });
 
-commentLoader.addEventListener('click', () => {
-  const hiddenComments = commentList.querySelectorAll('.hidden');
-  const newCommentsCount = Math.min(hiddenComments.length, COMMENTS_LOAD_STEP);
-
-  shownCommentCount.textContent = +shownCommentCount.textContent + newCommentsCount;
-
-  for (let i = 0; i < newCommentsCount; i++) {
-    hiddenComments[i].classList.remove('hidden');
-  }
-
-  if (hiddenComments.length <= COMMENTS_LOAD_STEP) {
-    commentLoader.classList.add('hidden');
-  }
+modalCloseButton.addEventListener('click', () => {
+  closeFullSizeModal();
 });
 
 export { addThumbnailClickHandler };
