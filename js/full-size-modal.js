@@ -1,4 +1,4 @@
-import { getDataFromUrl, isEscapeKey } from './util.js';
+import { isEscapeKey } from './util.js';
 
 const COMMENTS_LOAD_STEP = 5;
 
@@ -17,19 +17,11 @@ const modalCloseButton = modal.querySelector('.big-picture__cancel');
 
 let currentPictureData;
 
-const onDocumentKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-
-    closeFullSizeModal();
-  }
-};
-
-const createCommentNodes = (comments, startingCommentIndex) => {
+const createCommentNodes = (comments) => {
   const commentFragment = document.createDocumentFragment();
-  const createdCommentsCount = Math.min(comments.length, COMMENTS_LOAD_STEP + startingCommentIndex);
+  const createdCommentsCount = Math.min(commentList.childElementCount + COMMENTS_LOAD_STEP, comments.length);
 
-  for (let i = startingCommentIndex; i < createdCommentsCount; i++) {
+  for (let i = commentList.childElementCount; i < createdCommentsCount; i++) {
     const { avatar, message, name } = comments[i];
     const commentNode = commentTemplate.cloneNode(true);
 
@@ -47,29 +39,35 @@ const createCommentNodes = (comments, startingCommentIndex) => {
   return commentFragment;
 };
 
-function openFullSizeModal(dataObject) {
-  picture.src = dataObject.url;
-  likeCount.textContent = dataObject.likes;
-  totalCommentCount.textContent = dataObject.comments.length;
-  description.textContent = dataObject.description;
-  commentList.replaceChildren(createCommentNodes(dataObject.comments, 0));
-  shownCommentCount.textContent = commentList.childElementCount;
-
-  modal.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-
-  document.addEventListener('keydown', onDocumentKeydown);
-}
-
-function closeFullSizeModal() {
+const closeFullSizeModal = () => {
   commentList.replaceChildren();
 
   commentLoader.classList.remove('hidden');
   modal.classList.add('hidden');
   document.body.classList.remove('modal-open');
+};
 
-  document.removeEventListener('keydown', onDocumentKeydown);
-}
+const onDocumentKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+
+    closeFullSizeModal();
+  }
+};
+
+const openFullSizeModal = (dataObject) => {
+  picture.src = dataObject.url;
+  likeCount.textContent = dataObject.likes;
+  totalCommentCount.textContent = dataObject.comments.length;
+  description.textContent = dataObject.description;
+  commentList.replaceChildren(createCommentNodes(dataObject.comments));
+  shownCommentCount.textContent = commentList.childElementCount;
+
+  modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+
+  document.addEventListener('keydown', onDocumentKeydown, { once: true });
+};
 
 const addThumbnailClickHandler = (pictures) => {
   pictureContainer.addEventListener('click', (evt) => {
@@ -78,15 +76,16 @@ const addThumbnailClickHandler = (pictures) => {
     if (thumbnailNode) {
       evt.preventDefault();
 
-      const thumbnailSrc = thumbnailNode.querySelector('.picture__img').src;
-      currentPictureData = getDataFromUrl(thumbnailSrc, pictures, 'photos');
+      currentPictureData = pictures[thumbnailNode.dataset.index];
       openFullSizeModal(currentPictureData);
     }
   });
 };
 
 commentLoader.addEventListener('click', () => {
-  commentList.append(createCommentNodes(currentPictureData.comments, commentList.childElementCount));
+  const commentNodes = createCommentNodes(currentPictureData.comments);
+
+  commentList.append(commentNodes);
   shownCommentCount.textContent = commentList.childElementCount;
 });
 
