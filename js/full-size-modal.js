@@ -39,14 +39,6 @@ const createCommentNodes = (comments) => {
   return commentFragment;
 };
 
-const closeFullSizeModal = () => {
-  commentList.replaceChildren();
-
-  commentLoader.classList.remove('hidden');
-  modal.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-};
-
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -55,7 +47,7 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
-const openFullSizeModal = (dataObject) => {
+function openFullSizeModal(dataObject) {
   picture.src = dataObject.url;
   likeCount.textContent = dataObject.likes;
   totalCommentCount.textContent = dataObject.comments.length;
@@ -66,8 +58,18 @@ const openFullSizeModal = (dataObject) => {
   modal.classList.remove('hidden');
   document.body.classList.add('modal-open');
 
-  document.addEventListener('keydown', onDocumentKeydown, { once: true });
-};
+  document.addEventListener('keydown', onDocumentKeydown);
+}
+
+function closeFullSizeModal() {
+  commentList.replaceChildren();
+
+  commentLoader.classList.remove('hidden');
+  modal.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+
+  document.removeEventListener('keydown', onDocumentKeydown);
+}
 
 const addThumbnailClickHandler = (pictures) => {
   pictureContainer.addEventListener('click', (evt) => {
