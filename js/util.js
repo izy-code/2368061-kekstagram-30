@@ -45,4 +45,13 @@ const createJoinedLine = (lines, lineCountMin, lineCountMax) => {
   return Array.from({ length: lineCount }, () => lines[lineIndexGenerator()]).join(' ');
 };
 
-export { getRandomInteger, getRandomArrayElement, createSequentialIdGenerator, createRandomIdFromRangeGenerator, createJoinedLine };
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {
+  getRandomInteger,
+  getRandomArrayElement,
+  createSequentialIdGenerator,
+  createRandomIdFromRangeGenerator,
+  createJoinedLine,
+  isEscapeKey
+};
