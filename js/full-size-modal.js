@@ -7,13 +7,13 @@ const commentTemplate = document.querySelector('#comment').content.querySelector
 const modal = document.querySelector('.big-picture');
 const picture = modal.querySelector('.big-picture__img img');
 const likeCount = modal.querySelector('.likes-count');
-const commentCountNode = modal.querySelector('.social__comment-count');
-const shownCommentCount = commentCountNode.querySelector('.social__comment-shown-count');
-const totalCommentCount = commentCountNode.querySelector('.social__comment-total-count');
+const commentCount = modal.querySelector('.social__comment-count');
+const shownCommentCount = commentCount.querySelector('.social__comment-shown-count');
+const totalCommentCount = commentCount.querySelector('.social__comment-total-count');
 const commentList = modal.querySelector('.social__comments');
 const description = modal.querySelector('.social__caption');
 const commentLoader = modal.querySelector('.comments-loader');
-const modalCloseButton = modal.querySelector('.big-picture__cancel');
+const closeButton = modal.querySelector('.big-picture__cancel');
 
 let currentPictureData;
 
@@ -77,25 +77,25 @@ function closeFullSizeModal() {
 
 const addThumbnailClickHandler = (pictures) => {
   pictureContainer.addEventListener('click', (evt) => {
-    const thumbnailNode = evt.target.closest('a.picture');
+    const thumbnail = evt.target.closest('a.picture');
 
-    if (thumbnailNode) {
+    if (thumbnail) {
       evt.preventDefault();
 
-      currentPictureData = pictures[thumbnailNode.dataset.index];
+      currentPictureData = pictures[thumbnail.dataset.index];
       openFullSizeModal(currentPictureData);
     }
   });
 };
 
 commentLoader.addEventListener('click', () => {
-  const commentNodes = createCommentFragment(currentPictureData.comments);
+  const loadedComments = createCommentFragment(currentPictureData.comments);
 
-  commentList.append(commentNodes);
+  commentList.append(loadedComments);
   shownCommentCount.textContent = commentList.childElementCount;
 });
 
-modalCloseButton.addEventListener('click', () => {
+closeButton.addEventListener('click', () => {
   closeFullSizeModal();
 });
 
