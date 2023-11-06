@@ -21,7 +21,7 @@ const addEffect = (min, max, step, filter, unit = '') => {
   previewImage.style.filter = `${filter}(${max}${unit})`;
 };
 
-const cancelEffects = () => {
+const cancelEffect = () => {
   effectLevelContainer.classList.add('hidden');
   previewImage.style.filter = '';
   effectValue.value = '';
@@ -71,9 +71,9 @@ effectList.addEventListener('change', (evt) => {
         addEffect(1, 3, 0.1, 'brightness');
         break;
       default:
-        cancelEffects();
+        cancelEffect();
     }
   }
 });
 
-export { cancelEffects };
+export { cancelEffect };
