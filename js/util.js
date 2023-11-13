@@ -1,57 +1,73 @@
-const getRandomInteger = (start, end) => {
-  const lower = Math.ceil(Math.min(start, end));
-  const upper = Math.floor(Math.max(start, end));
+const ALERT_SHOW_TIME = 5000;
 
-  return Math.floor(Math.random() * (upper - lower + 1) + lower);
-};
+const downloadErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
+const uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
+const uploadSuccessTemplate = document.querySelector('#success').content.querySelector('.success');
 
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
-const createSequentialIdGenerator = (idMin = 0) => {
-  let currentValue = idMin;
-
-  return () => currentValue++;
-};
-
-const createRandomIdFromRangeGenerator = (idMin, idMax) => {
-  const previousValues = [];
-
-  return () => {
-    let currentValue = getRandomInteger(idMin, idMax);
-
-    if (previousValues.length >= (idMax - idMin + 1)) {
-      return null;
-    }
-
-    while (previousValues.includes(currentValue)) {
-      currentValue = getRandomInteger(idMin, idMax);
-    }
-
-    previousValues.push(currentValue);
-
-    return currentValue;
-  };
-};
-
-const createJoinedLine = (lines, lineCountMin, lineCountMax) => {
-  const lineCount = getRandomInteger(lineCountMin, lineCountMax);
-
-  if (lineCount >= lines.length) {
-    return lines.join(' ');
-  }
-
-  const lineIndexGenerator = createRandomIdFromRangeGenerator(0, lines.length - 1);
-
-  return Array.from({ length: lineCount }, () => lines[lineIndexGenerator()]).join(' ');
-};
+let currentMessage;
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
+const onMessageButtonClick = () => {
+  removeMessage();
+};
+
+const onDocumentKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    removeMessage();
+  }
+};
+
+const onBodyClick = (evt) => {
+  if (!currentMessage.children[0].contains(evt.target)) {
+    removeMessage();
+  }
+};
+
+function removeMessage() {
+  currentMessage.remove();
+
+  document.removeEventListener('keydown', onDocumentKeydown);
+  document.body.removeEventListener('click', onBodyClick);
+}
+
+const addMessageButtonHandler = (buttonClass) => {
+  const messageButton = currentMessage.querySelector(buttonClass);
+
+  if (messageButton) {
+    messageButton.addEventListener('click', onMessageButtonClick);
+  }
+};
+
+const showMessage = (template) => {
+  currentMessage = template.cloneNode(true);
+
+  document.body.append(currentMessage);
+};
+
+const showMessageWithButton = (messageTemplate, buttonClass) => {
+  showMessage(messageTemplate);
+  addMessageButtonHandler(buttonClass);
+
+  document.addEventListener('keydown', onDocumentKeydown);
+  document.body.addEventListener('click', onBodyClick);
+};
+
+const showDownloadError = () => {
+  showMessage(downloadErrorTemplate);
+
+  setTimeout(() => {
+    currentMessage.remove();
+  }, ALERT_SHOW_TIME);
+};
+
+const showUploadError = () => showMessageWithButton(uploadErrorTemplate, '.error__button');
+const showUploadSuccess = () => showMessageWithButton(uploadSuccessTemplate, '.success__button');
+
 export {
-  getRandomInteger,
-  getRandomArrayElement,
-  createSequentialIdGenerator,
-  createRandomIdFromRangeGenerator,
-  createJoinedLine,
-  isEscapeKey
+  isEscapeKey,
+  showDownloadError,
+  showUploadError,
+  showUploadSuccess
 };
