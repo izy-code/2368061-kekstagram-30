@@ -6,11 +6,34 @@ const uploadSuccessTemplate = document.querySelector('#success').content.querySe
 
 let currentMessage;
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
+const getRandomInteger = (start, end) => {
+  const lower = Math.ceil(Math.min(start, end));
+  const upper = Math.floor(Math.max(start, end));
 
-const onMessageButtonClick = () => {
-  removeMessage();
+  return Math.floor(Math.random() * (upper - lower + 1) + lower);
 };
+
+const createRandomIdFromRangeGenerator = (idMin, idMax) => {
+  const previousValues = [];
+
+  return () => {
+    let currentValue = getRandomInteger(idMin, idMax);
+
+    if (previousValues.length >= (idMax - idMin + 1)) {
+      return null;
+    }
+
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomInteger(idMin, idMax);
+    }
+
+    previousValues.push(currentValue);
+
+    return currentValue;
+  };
+};
+
+const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -36,7 +59,9 @@ const addMessageButtonHandler = (buttonClass) => {
   const messageButton = currentMessage.querySelector(buttonClass);
 
   if (messageButton) {
-    messageButton.addEventListener('click', onMessageButtonClick);
+    messageButton.addEventListener('click', () => {
+      removeMessage();
+    });
   }
 };
 
@@ -65,9 +90,20 @@ const showDownloadError = () => {
 const showUploadError = () => showMessageWithButton(uploadErrorTemplate, '.error__button');
 const showUploadSuccess = () => showMessageWithButton(uploadSuccessTemplate, '.success__button');
 
+function debounce(callback, timeoutDelay = 500) {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
 export {
+  createRandomIdFromRangeGenerator,
   isEscapeKey,
   showDownloadError,
   showUploadError,
-  showUploadSuccess
+  showUploadSuccess,
+  debounce
 };
