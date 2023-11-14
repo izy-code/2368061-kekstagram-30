@@ -37,25 +37,21 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
-const onMainPreviewLoad = () => {
-  URL.revokeObjectURL(mainPreview.src);
+const isValidFileType = (file) => {
+  const fileName = file.name.toLowerCase();
+
+  return FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
 };
 
 const updatePreviews = () => {
   const file = fileField.files[0];
-  const fileName = file.name.toLowerCase();
-  const matches = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
 
-  if (matches) {
-    const pictureUrlString = URL.createObjectURL(file);
-
-    mainPreview.src = pictureUrlString;
+  if (file && isValidFileType(file)) {
+    mainPreview.src = URL.createObjectURL(file);
 
     effectPreviews.forEach((effectPreview) => {
-      effectPreview.style.backgroundImage = `url('${pictureUrlString}')`;
+      effectPreview.style.backgroundImage = `url('${mainPreview.src}')`;
     });
-
-    mainPreview.addEventListener('load', onMainPreviewLoad);
   }
 };
 
@@ -75,9 +71,9 @@ const closeUploadForm = () => {
 
   pristine.reset();
   mainPreview.style.transform = '';
+  URL.revokeObjectURL(mainPreview.src);
 
   document.removeEventListener('keydown', onDocumentKeydown);
-  mainPreview.removeEventListener('load', onMainPreviewLoad);
 };
 
 const setScale = (value) => {
