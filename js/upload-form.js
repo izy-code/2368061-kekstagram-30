@@ -20,7 +20,8 @@ const descriptionField = overlay.querySelector('.text__description');
 const scaleValue = overlay.querySelector('.scale__control--value');
 const scaleDownControl = overlay.querySelector('.scale__control--smaller');
 const scaleUpControl = overlay.querySelector('.scale__control--bigger');
-const previewImage = overlay.querySelector('.img-upload__preview > img');
+const mainPreview = overlay.querySelector('.img-upload__preview > img');
+const effectPreviews = overlay.querySelectorAll('.effects__preview');
 const submitButton = overlay.querySelector('.img-upload__submit');
 
 const pristine = createPristine(form, hashtagField, descriptionField);
@@ -36,9 +37,34 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
+const onMainPreviewLoad = () => {
+  URL.revokeObjectURL(mainPreview.src);
+};
+
+const updatePreviews = () => {
+  const file = fileField.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
+
+  if (matches) {
+    const pictureUrlString = URL.createObjectURL(file);
+
+    mainPreview.src = pictureUrlString;
+
+    effectPreviews.forEach((effectPreview) => {
+      effectPreview.style.backgroundImage = `url('${pictureUrlString}')`;
+    });
+
+    mainPreview.addEventListener('load', onMainPreviewLoad);
+  }
+};
+
 const openUploadForm = () => {
   overlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
+
+  resetEffect();
+  updatePreviews();
 
   document.addEventListener('keydown', onDocumentKeydown);
 };
@@ -48,10 +74,10 @@ const closeUploadForm = () => {
   document.body.classList.remove('modal-open');
 
   pristine.reset();
-  resetEffect();
-  previewImage.style.transform = '';
+  mainPreview.style.transform = '';
 
   document.removeEventListener('keydown', onDocumentKeydown);
+  mainPreview.removeEventListener('load', onMainPreviewLoad);
 };
 
 const setScale = (value) => {
@@ -62,7 +88,7 @@ const setScale = (value) => {
   }
 
   scaleValue.value = `${value}%`;
-  previewImage.style.transform = `scale(${value / 100})`;
+  mainPreview.style.transform = `scale(${value / 100})`;
 };
 
 const toggleSubmitButton = (isDisabled) => {
@@ -72,18 +98,6 @@ const toggleSubmitButton = (isDisabled) => {
 
 const setFileFieldChange = () => {
   fileField.addEventListener('change', () => {
-    const file = fileField.files[0];
-    const fileName = file.name.toLowerCase();
-    const matches = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
-
-    if (matches) {
-      previewImage.src = URL.createObjectURL(file);
-
-      previewImage.addEventListener('load', () => {
-        URL.revokeObjectURL(previewImage.src);
-      });
-    }
-
     openUploadForm();
   });
 };
