@@ -15,5 +15,5 @@ const initPictureGallery = async () => {
   }
 };
 
-setFileFieldChange();
 initPictureGallery();
+setFileFieldChange();

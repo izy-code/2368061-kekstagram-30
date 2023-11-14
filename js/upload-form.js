@@ -6,6 +6,7 @@ import { sendData } from './api.js';
 const SCALE_MIN = 25;
 const SCALE_MAX = 100;
 const SCALE_STEP = 25;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const SubmitButtonText = {
   IDLE: 'Опубликовать',
   SENDING: 'Публикую...'
@@ -71,6 +72,18 @@ const toggleSubmitButton = (isDisabled) => {
 
 const setFileFieldChange = () => {
   fileField.addEventListener('change', () => {
+    const file = fileField.files[0];
+    const fileName = file.name.toLowerCase();
+    const matches = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
+
+    if (matches) {
+      previewImage.src = URL.createObjectURL(file);
+
+      previewImage.addEventListener('load', () => {
+        URL.revokeObjectURL(previewImage.src);
+      });
+    }
+
     openUploadForm();
   });
 };
