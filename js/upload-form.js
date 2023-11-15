@@ -11,25 +11,25 @@ const SubmitButtonText = {
   SENDING: 'Публикую...'
 };
 
-const form = document.querySelector('.img-upload__form');
-const fileField = form.querySelector('.img-upload__input');
-const overlay = form.querySelector('.img-upload__overlay');
-const hashtagField = overlay.querySelector('.text__hashtags');
-const descriptionField = overlay.querySelector('.text__description');
-const mainPreview = overlay.querySelector('.img-upload__preview > img');
-const effectPreviews = overlay.querySelectorAll('.effects__preview');
-const submitButton = overlay.querySelector('.img-upload__submit');
+const formNode = document.querySelector('.img-upload__form');
+const fileFieldNode = formNode.querySelector('.img-upload__input');
+const overlayNode = formNode.querySelector('.img-upload__overlay');
+const hashtagFieldNode = overlayNode.querySelector('.text__hashtags');
+const descriptionFieldNode = overlayNode.querySelector('.text__description');
+const mainPreviewNode = overlayNode.querySelector('.img-upload__preview > img');
+const effectPreviewNodes = overlayNode.querySelectorAll('.effects__preview');
+const submitButtonNode = overlayNode.querySelector('.img-upload__submit');
 
-const pristine = createPristine(form, hashtagField, descriptionField);
+const pristine = createPristine(formNode, hashtagFieldNode, descriptionFieldNode);
 
 const isErrorMessageExists = () => Boolean(document.querySelector('.error'));
 
-const isTextFieldFocused = () => [hashtagField, descriptionField].includes(document.activeElement);
+const isTextFieldFocused = () => [hashtagFieldNode, descriptionFieldNode].includes(document.activeElement);
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt) && !isTextFieldFocused() && !isErrorMessageExists()) {
     evt.preventDefault();
-    form.reset();
+    formNode.reset();
   }
 };
 
@@ -40,19 +40,19 @@ const isValidFileType = (file) => {
 };
 
 const updatePreviews = () => {
-  const file = fileField.files[0];
+  const file = fileFieldNode.files[0];
 
-  if (file && isValidFileType(file)) {
-    mainPreview.src = URL.createObjectURL(file);
+  if (isValidFileType(file)) {
+    mainPreviewNode.src = URL.createObjectURL(file);
 
-    effectPreviews.forEach((effectPreview) => {
-      effectPreview.style.backgroundImage = `url('${mainPreview.src}')`;
+    effectPreviewNodes.forEach((previewNode) => {
+      previewNode.style.backgroundImage = `url('${mainPreviewNode.src}')`;
     });
   }
 };
 
 const openUploadForm = () => {
-  overlay.classList.remove('hidden');
+  overlayNode.classList.remove('hidden');
   document.body.classList.add('modal-open');
 
   resetEffect();
@@ -62,30 +62,30 @@ const openUploadForm = () => {
 };
 
 const closeUploadForm = () => {
-  overlay.classList.add('hidden');
+  overlayNode.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
   pristine.reset();
-  mainPreview.style.transform = '';
-  URL.revokeObjectURL(mainPreview.src);
+  mainPreviewNode.style.transform = '';
+  URL.revokeObjectURL(mainPreviewNode.src);
 
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 const toggleSubmitButton = (isDisabled) => {
-  submitButton.disabled = isDisabled;
-  submitButton.textContent = isDisabled ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
+  submitButtonNode.disabled = isDisabled;
+  submitButtonNode.textContent = isDisabled ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
 };
 
 const setFileFieldChange = () => {
-  fileField.addEventListener('change', () => {
+  fileFieldNode.addEventListener('change', () => {
     openUploadForm();
   });
 };
 
 setScaleHandlers();
 
-form.addEventListener('submit', async (evt) => {
+formNode.addEventListener('submit', async (evt) => {
   evt.preventDefault();
 
   if (pristine.validate()) {
@@ -103,7 +103,7 @@ form.addEventListener('submit', async (evt) => {
   }
 });
 
-form.addEventListener('reset', () => {
+formNode.addEventListener('reset', () => {
   closeUploadForm();
 });
 

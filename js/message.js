@@ -2,11 +2,11 @@ import { isEscapeKey } from './util.js';
 
 const ALERT_SHOW_TIME = 5000;
 
-const downloadErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
-const uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
-const uploadSuccessTemplate = document.querySelector('#success').content.querySelector('.success');
+const downloadErrorTemplateNode = document.querySelector('#data-error').content.querySelector('.data-error');
+const uploadErrorTemplateNode = document.querySelector('#error').content.querySelector('.error');
+const uploadSuccessTemplateNode = document.querySelector('#success').content.querySelector('.success');
 
-let currentMessage;
+let currentMessageNode;
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -16,36 +16,36 @@ const onDocumentKeydown = (evt) => {
 };
 
 const onBodyClick = (evt) => {
-  if (!currentMessage.children[0].contains(evt.target)) {
+  if (!currentMessageNode.children[0].contains(evt.target)) {
     removeMessage();
   }
 };
 
 function removeMessage() {
-  currentMessage.remove();
+  currentMessageNode.remove();
 
   document.removeEventListener('keydown', onDocumentKeydown);
   document.body.removeEventListener('click', onBodyClick);
 }
 
 const addMessageButtonHandler = (buttonClass) => {
-  const messageButton = currentMessage.querySelector(buttonClass);
+  const closeButtonNode = currentMessageNode.querySelector(buttonClass);
 
-  if (messageButton) {
-    messageButton.addEventListener('click', () => {
+  if (closeButtonNode) {
+    closeButtonNode.addEventListener('click', () => {
       removeMessage();
     });
   }
 };
 
-const showMessage = (template) => {
-  currentMessage = template.cloneNode(true);
+const showMessage = (templateNode) => {
+  currentMessageNode = templateNode.cloneNode(true);
 
-  document.body.append(currentMessage);
+  document.body.append(currentMessageNode);
 };
 
-const showMessageWithButton = (messageTemplate, buttonClass) => {
-  showMessage(messageTemplate);
+const showMessageWithButton = (messageTemplateNode, buttonClass) => {
+  showMessage(messageTemplateNode);
   addMessageButtonHandler(buttonClass);
 
   document.addEventListener('keydown', onDocumentKeydown);
@@ -53,15 +53,15 @@ const showMessageWithButton = (messageTemplate, buttonClass) => {
 };
 
 const showDownloadError = () => {
-  showMessage(downloadErrorTemplate);
+  showMessage(downloadErrorTemplateNode);
 
   setTimeout(() => {
-    currentMessage.remove();
+    currentMessageNode.remove();
   }, ALERT_SHOW_TIME);
 };
 
-const showUploadError = () => showMessageWithButton(uploadErrorTemplate, '.error__button');
-const showUploadSuccess = () => showMessageWithButton(uploadSuccessTemplate, '.success__button');
+const showUploadError = () => showMessageWithButton(uploadErrorTemplateNode, '.error__button');
+const showUploadSuccess = () => showMessageWithButton(uploadSuccessTemplateNode, '.success__button');
 
 export {
   showDownloadError,
