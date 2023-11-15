@@ -1,11 +1,10 @@
-import { isEscapeKey, showUploadSuccess, showUploadError } from './util.js';
+import { isEscapeKey } from './util.js';
+import { showUploadSuccess, showUploadError } from './message.js';
+import { setScaleHandlers } from './scale.js';
 import { createPristine } from './validation.js';
 import { resetEffect } from './effect.js';
 import { sendData } from './api.js';
 
-const SCALE_MIN = 25;
-const SCALE_MAX = 100;
-const SCALE_STEP = 25;
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const SubmitButtonText = {
   IDLE: 'Опубликовать',
@@ -17,9 +16,6 @@ const fileField = form.querySelector('.img-upload__input');
 const overlay = form.querySelector('.img-upload__overlay');
 const hashtagField = overlay.querySelector('.text__hashtags');
 const descriptionField = overlay.querySelector('.text__description');
-const scaleValue = overlay.querySelector('.scale__control--value');
-const scaleDownControl = overlay.querySelector('.scale__control--smaller');
-const scaleUpControl = overlay.querySelector('.scale__control--bigger');
 const mainPreview = overlay.querySelector('.img-upload__preview > img');
 const effectPreviews = overlay.querySelectorAll('.effects__preview');
 const submitButton = overlay.querySelector('.img-upload__submit');
@@ -76,17 +72,6 @@ const closeUploadForm = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-const setScale = (value) => {
-  if (value < SCALE_MIN) {
-    value = SCALE_MIN;
-  } else if (value > SCALE_MAX) {
-    value = SCALE_MAX;
-  }
-
-  scaleValue.value = `${value}%`;
-  mainPreview.style.transform = `scale(${value / 100})`;
-};
-
 const toggleSubmitButton = (isDisabled) => {
   submitButton.disabled = isDisabled;
   submitButton.textContent = isDisabled ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
@@ -97,6 +82,8 @@ const setFileFieldChange = () => {
     openUploadForm();
   });
 };
+
+setScaleHandlers();
 
 form.addEventListener('submit', async (evt) => {
   evt.preventDefault();
@@ -118,18 +105,6 @@ form.addEventListener('submit', async (evt) => {
 
 form.addEventListener('reset', () => {
   closeUploadForm();
-});
-
-scaleDownControl.addEventListener('click', () => {
-  const scaleAfterClick = parseInt(scaleValue.value, 10) - SCALE_STEP;
-
-  setScale(scaleAfterClick);
-});
-
-scaleUpControl.addEventListener('click', () => {
-  const scaleAfterClick = parseInt(scaleValue.value, 10) + SCALE_STEP;
-
-  setScale(scaleAfterClick);
 });
 
 export { setFileFieldChange };
