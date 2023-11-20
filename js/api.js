@@ -4,16 +4,16 @@ const Method = {
   POST: 'POST',
 };
 const Route = {
-  [Method.GET]: '/data',
-  [Method.POST]: '/',
+  [Method.GET]: `${BASE_URL}/data`,
+  [Method.POST]: `${BASE_URL}/`,
 };
 const ErrorText = {
   [Method.GET]: 'Не удалось загрузить данные',
   [Method.POST]: 'Ошибка загрузки файла'
 };
 
-const load = async (method = Method.GET, body = null) => {
-  const response = await fetch(`${BASE_URL}${Route[method]}`, { method, body });
+const getParsedFetchResponse = async (method = Method.GET, body = null) => {
+  const response = await fetch(`${Route[method]}`, { method, body });
 
   if (!response.ok) {
     throw new Error(ErrorText[method]);
@@ -22,8 +22,8 @@ const load = async (method = Method.GET, body = null) => {
   return response.json();
 };
 
-const getData = async () => load();
+const getDataFromServer = async () => getParsedFetchResponse();
 
-const sendData = async (body) => load(Method.POST, body);
+const sendRequestWithBody = async (body) => getParsedFetchResponse(Method.POST, body);
 
-export { getData, sendData };
+export { getDataFromServer, sendRequestWithBody };

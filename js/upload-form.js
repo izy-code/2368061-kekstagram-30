@@ -3,7 +3,7 @@ import { showUploadSuccess, showUploadError } from './message.js';
 import { setScaleHandlers } from './scale.js';
 import { createPristine } from './validation.js';
 import { resetEffect } from './effect.js';
-import { sendData } from './api.js';
+import { sendRequestWithBody } from './api.js';
 
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const SubmitButtonText = {
@@ -79,7 +79,7 @@ const toggleSubmitButton = (isDisabled) => {
   submitButtonNode.textContent = isDisabled ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
 };
 
-const setFileFieldChange = () => {
+const addPictureUploadHandler = () => {
   fileFieldNode.addEventListener('change', () => {
     openUploadForm();
   });
@@ -94,7 +94,7 @@ formNode.addEventListener('submit', async (evt) => {
     toggleSubmitButton(true);
 
     try {
-      await sendData(new FormData(evt.target));
+      await sendRequestWithBody(new FormData(evt.target));
       evt.target.reset();
       showUploadSuccess();
     } catch {
@@ -109,4 +109,4 @@ formNode.addEventListener('reset', () => {
   closeUploadForm();
 });
 
-export { setFileFieldChange };
+export { addPictureUploadHandler };

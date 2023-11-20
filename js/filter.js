@@ -13,7 +13,7 @@ const buttonContainerNode = document.querySelector('.img-filters');
 const pictureContainerNode = document.querySelector('.pictures');
 
 let currentFilterButtonNode = buttonContainerNode.querySelector(`#${ButtonId.DEFAULT}`);
-let activeButtonNode = currentFilterButtonNode;
+let activeFilterButtonNode = currentFilterButtonNode;
 
 const selectRandomPictures = (pictures) => {
   const generateRandomIndex = createRandomIdFromRangeGenerator(0, pictures.length - 1);
@@ -34,11 +34,11 @@ const buttonIdToFilterHandler = {
   [ButtonId.DISCUSSED]: sortByCommentsDescending
 };
 
-const changeActiveButton = (clickedButtonNode) => {
-  if (clickedButtonNode !== activeButtonNode) {
+const changeActiveFilterButton = (clickedButtonNode) => {
+  if (clickedButtonNode !== activeFilterButtonNode) {
     clickedButtonNode.classList.add('img-filters__button--active');
-    activeButtonNode.classList.remove('img-filters__button--active');
-    activeButtonNode = clickedButtonNode;
+    activeFilterButtonNode.classList.remove('img-filters__button--active');
+    activeFilterButtonNode = clickedButtonNode;
   }
 };
 
@@ -69,7 +69,7 @@ const setThumbnailFilters = (pictures) => {
     const clickedButtonNode = evt.target.closest('button.img-filters__button');
 
     if (clickedButtonNode) {
-      changeActiveButton(clickedButtonNode);
+      changeActiveFilterButton(clickedButtonNode);
       debouncedFilterThumbnails(pictures, clickedButtonNode);
     }
   });
